@@ -15,7 +15,7 @@ import { TbSend2 } from 'react-icons/tb';
 import { TbBrandWhatsappFilled } from "react-icons/tb";
 import { SlClose } from "react-icons/sl";
 import { LuSend } from "react-icons/lu";
-import ChatTheme from '../assets/ChatTheme.avif'
+import ChatTheme from '../assets/chatTheme.avif'
 
 
 import {setMessages, appendSentMessage } from '../store/chatSlice'; // Matches your flat messages slice path
