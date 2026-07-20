@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import React, { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -7,9 +8,10 @@ import axios from "axios";
 import AuthPage from "./pages/AuthPage";
 import VerifyOtpPage from "./pages/VerifyOtpPage";
 
-import Home from "./pages/Home";
-import Profile from "./pages/Profile"; 
-import ProfileDetails from "./pages/ProfileDetails";
+//code splitting here
+const Home = lazy(() => import("./pages/Home"));
+const Profile = lazy(() => import("./pages/Profile"));
+const ProfileDetails = lazy(() => import("./pages/ProfileDetails"));
 
 import ShimmerLoading from "./components/ShimmerLoading";
 
@@ -31,6 +33,9 @@ const { loading , isAuthenticated} = useSelector((state) => state.user);
 
 return (
     <SocketProvider>
+        {/* to handle the chunking here */}
+        <Suspense fallback={<ShimmerLoading type="fullscreen" />}>
+
         <Routes>
                 {/* 1. PROTECTED ROUTE CHANNELS (Require Authentication) */}
                 <Route 
@@ -46,7 +51,7 @@ return (
                 element={ isAuthenticated ? <ProfileDetails/> : <Navigate to='/auth' replace /> }
                 />
 
-                {/* 2. PUBLIC ROUTE CHANNELS (Require Guest Status) */}
+                {/* 2. PUBLIC ROUTE CHANNELS (Require User Status) */}
                 <Route 
                     path="/auth" 
                     element={!isAuthenticated ? <AuthPage /> : <Navigate to="/" replace />} 
@@ -62,6 +67,7 @@ return (
                     element={<Navigate to={isAuthenticated ? "/" : "/auth"} replace />} 
                 />
             </Routes>
+            </Suspense>
 
         </SocketProvider>
     );
