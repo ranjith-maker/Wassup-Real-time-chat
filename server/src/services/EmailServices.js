@@ -2,38 +2,31 @@ import nodemailer from 'nodemailer'
 import dotenv from "dotenv";
 dotenv.config();
 
+
 const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // Uses SSL/TLS for port 465
+    auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+    },
+    family: 4, //  Forces IPv4 to fix the ENETUNREACH error on cloud hosts
+    tls: {
+        rejectUnauthorized: false
+    }
+});
 
-service : 'gmail',
-auth:{
+transporter.verify((error, success) => {
+    if (error) {
+        console.error('Gmail services connection failed:', error);
+    } else {
+        console.log('Gmail configured properly and ready to send email:', success);
+    }
+});
 
-user:process.env.MAIL_USER,
-pass : process.env.MAIL_PASS,
-
-}
-     
-})
-
-
-transporter.verify((error , success )=>{
-
-if(error){
-    console.error('Gmail services connection failed',error);
-    
-}else{
-    console.log('Gmail configured properly and ready to send email',success);
-    
-}
-
-})
-
-
-
-export const sendOtptoEmail  = async(email,otp,)=>{
-
-    //  console.log("Sending OTP email to:", email);
-
-const html = `
+export const sendOtptoEmail = async (email, otp) => {
+    const html = `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
       <h2 style="color: #075e54;">🔐 Wassup Web Verification</h2>
       
@@ -55,22 +48,17 @@ const html = `
 
       <small style="color: #777;">This is an automated message. Please do not reply.</small>
     </div>
-  `
+  `;
 
-const info = await transporter.sendMail({
+    const info = await transporter.sendMail({
+        from: `"Wassup Support" <${process.env.MAIL_USER}>`,
+        to: email,
+        subject: "Ranjith's Wassup Verification OTP",
+        html
+    });
 
-    from: process.env.MAIL_USER,
-    to : email,
-    subject : "Ranjith's Wassup Verification OTP",
-    html
-})
-
-  // console.log("Email sent:", info.messageId);
-
-}
-
-
-
+    return info;
+};
 
 
 

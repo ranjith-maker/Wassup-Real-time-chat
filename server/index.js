@@ -15,6 +15,8 @@ import http from 'http'
 import { initializeSocket } from './src/services/Socket.js'
 
 
+// Make Node.js to prefer IPv4 over IPv6 to fix Nodemailer ENETUNREACH
+dns.setDefaultResultOrder('ipv4first');
 
 const app = express()
 //creating a native server here
@@ -49,6 +51,8 @@ app.use('/api/chat', chatRouter)
 
 app.use(errorHandler)
 
+
+// for MongoDB Atlas SRV lookups
 dns.setServers([
  '1.1.1.1',
  '8.8.8.8'
