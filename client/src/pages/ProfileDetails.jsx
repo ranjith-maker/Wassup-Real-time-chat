@@ -11,7 +11,7 @@ import { setSelectedUser } from '../store/userSlice';
 export default function ProfileDetails() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { userId } = useParams(); // URL parameter (e.g. /profile/:userId)
+    const { userId } = useParams(); 
 
     const selectedUser = useSelector((state) => state.user?.selectedUser);
     const [loading, setLoading] = useState(false);
@@ -33,8 +33,7 @@ export default function ProfileDetails() {
                     const fetchedUser = response.data?.data || response.data?.user || response.data;
                     if (fetchedUser) {
                         dispatch(setSelectedUser(fetchedUser));
-                        console.log('fetched him');
-                        
+                        // console.log('fetched him');
                     }
                 } catch (error) {
                     console.error("Failed to fetch user profile details:", error);

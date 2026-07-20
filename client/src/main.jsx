@@ -5,7 +5,7 @@ import store from './store/appStore.js'
 import {BrowserRouter} from 'react-router-dom'
 import {Provider} from 'react-redux'
 
-export const BASEURL = 'http://localhost:4000'
+export const BASEURL = 'https://wassup-real-time-chat-backend.onrender.com'
 
 
 createRoot(document.getElementById('root')).render(
