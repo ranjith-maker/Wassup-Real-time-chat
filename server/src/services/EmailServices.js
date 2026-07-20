@@ -1,44 +1,64 @@
-import nodemailer from 'nodemailer'
+import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import dns from "dns";
+
 dotenv.config();
-import dns from 'dns'
 
+// Check what Render resolves for smtp.gmail.com
 dns.lookup("smtp.gmail.com", { all: true }, (err, addresses) => {
-  console.log("DNS:", err, addresses);
+    console.log("========== DNS LOOKUP ==========");
+    console.log(err);
+    console.log(addresses);
+    console.log("===============================");
 });
-
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
-    secure: true, // Uses SSL/TLS for port 465
+    secure: true,
+
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
     },
-    family: 4, //  Forces IPv4 to fix the ENETUNREACH error on cloud hosts
+
+    // Force IPv4 lookup
+    lookup(hostname, options, callback) {
+        return dns.lookup(hostname, { family: 4 }, callback);
+    },
+
     tls: {
-        rejectUnauthorized: false
-    }
+        rejectUnauthorized: false,
+    },
+
+    logger: true,
+    debug: true,
 });
 
-transporter.verify((error, success) => {
-    if (error) {
-        console.error('Gmail services connection failed:', error);
+// Verify SMTP connection when server starts
+transporter.verify((err, success) => {
+    console.log("========== TRANSPORT VERIFY ==========");
+
+    if (err) {
+        console.error("SMTP VERIFY FAILED");
+        console.dir(err, { depth: null });
     } else {
-        console.log('Gmail configured properly and ready to send email:', success);
+        console.log("SMTP VERIFIED SUCCESSFULLY");
+        console.log(success);
     }
+
+    console.log("======================================");
 });
 
 export const sendOtptoEmail = async (email, otp) => {
     const html = `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
       <h2 style="color: #075e54;">🔐 Wassup Web Verification</h2>
-      
+
       <p>Hi there,</p>
-      
+
       <p>Your one-time password (OTP) to verify your Wassup Web account is:</p>
-      
+
       <h1 style="background: #e0f7fa; color: #000; padding: 10px 20px; display: inline-block; border-radius: 5px; letter-spacing: 2px;">
         ${otp}
       </h1>
@@ -47,26 +67,33 @@ export const sendOtptoEmail = async (email, otp) => {
 
       <p>If you didn’t request this OTP, please ignore this email.</p>
 
-      <p style="margin-top: 20px;">Thanks & Regards,<br/> Ranjith's Wassup Security Team </p>
+      <p style="margin-top: 20px;">Thanks & Regards,<br/>Ranjith's Wassup Security Team</p>
 
       <hr style="margin: 30px 0;" />
 
       <small style="color: #777;">This is an automated message. Please do not reply.</small>
     </div>
-  `;
+    `;
 
-    const info = await transporter.sendMail({
-        from: `"Wassup Support" <${process.env.MAIL_USER}>`,
-        to: email,
-        subject: "Ranjith's Wassup Verification OTP",
-        html
-    });
+    try {
+        const info = await transporter.sendMail({
+            from: `"Wassup Support" <${process.env.MAIL_USER}>`,
+            to: email,
+            subject: "Ranjith's Wassup Verification OTP",
+            html,
+        });
 
-    return info;
+        console.log("========== EMAIL SENT ==========");
+        console.log(info);
+        console.log("================================");
+
+        return info;
+    } catch (err) {
+        console.log("========== SENDMAIL ERROR ==========");
+        console.dir(err, { depth: null });
+        console.log("====================================");
+
+        throw err;
+    }
 };
-
-
-
-
-
 
