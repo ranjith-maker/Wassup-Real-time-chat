@@ -22,10 +22,11 @@ const transporter = nodemailer.createTransport({
         pass: process.env.MAIL_PASS,
     },
 
-    // Force IPv4 lookup
-    lookup(hostname, options, callback) {
-        return dns.lookup(hostname, { family: 4 }, callback);
-    },
+    family: 4,
+
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
 
     tls: {
         rejectUnauthorized: false,
