@@ -7,7 +7,7 @@ import dns from 'dns'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import { errorHandler } from './src/utils/CommonError.js'
-import cloudinaryConnect from './src/config/CLoudinary.js'
+import cloudinaryConnect from './src/config/Cloudinary.js'
 import authRouter from './src/routes/authRoutes.js'
 import userRouter from './src/routes/userRoutes.js'
 import chatRouter from './src/routes/chatRoutes.js'
@@ -24,7 +24,7 @@ const io = initializeSocket(server)
 //for gloabl access via req. object
 app.set('io', io);
 
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 app.use(express.json())
 app.use(express.urlencoded({ extended : true }))
 app.use(cookieParser())
