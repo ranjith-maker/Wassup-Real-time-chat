@@ -1,6 +1,11 @@
 import nodemailer from 'nodemailer'
 import dotenv from "dotenv";
 dotenv.config();
+import dns from 'dns'
+
+dns.lookup("smtp.gmail.com", { all: true }, (err, addresses) => {
+  console.log("DNS:", err, addresses);
+});
 
 
 const transporter = nodemailer.createTransport({

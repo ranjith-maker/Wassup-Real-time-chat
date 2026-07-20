@@ -18,6 +18,10 @@ import { initializeSocket } from './src/services/Socket.js'
 // Make Node.js to prefer IPv4 over IPv6 to fix Nodemailer ENETUNREACH
 dns.setDefaultResultOrder('ipv4first');
 
+dns.lookup("smtp.gmail.com", { all: true }, (err, addresses) => {
+  console.log(err, addresses);
+});
+
 const app = express()
 //creating a native server here
 const server = http.createServer(app)
