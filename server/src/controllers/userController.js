@@ -1,4 +1,3 @@
-
 import User from '../models/UserModel.js'
 import Message from '../models/MessageModel.js'
 import jwt from 'jsonwebtoken' 
@@ -43,6 +42,10 @@ export const editProfile = catchAsync(async (req, res, next) => {
     if (bio) user.bio = bio.trim();
     
     await user.save();
+    const io = req.app.get('io');
+    if (io) {
+        io.emit('user_profile_updated', user);
+    }
 
     // 5. Return payload wrapped in the data envelope (parsed properly by frontend)
     return res.status(200).json({
@@ -71,5 +74,29 @@ export const getOthers = catchAsync(async(req , res, next)=>{
     })
 })
 
+export const getOneUser = catchAsync(async(req,res,next)=>{
+
+
+const {userId} = req.params
+
+if(!userId){
+    throw new AppError('User id is required',400)
+}
+
+const user = await User.findById(userId)
+
+if(!user){
+    throw new AppError('User not found',404)
+}
+
+res.status(200).json({
+    success : true,
+    message:'User fetched successfully',
+    data : user
+})
+
+
+
+})
 
 

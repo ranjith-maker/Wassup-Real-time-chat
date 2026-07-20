@@ -31,6 +31,31 @@ const userSlice = createSlice({
         setLoading: (state, action) => {
             state.loading = action.payload;
         },
+        updateUserProfileRealtime: (state, action) => {
+            const updatedUser = action.payload;
+            if (!updatedUser?._id) return;
+
+            const updatedId = updatedUser._id.toString();
+
+            // 1. If it's the currently logged-in user updating their own profile
+            if (state.userData?._id?.toString() === updatedId) {
+                state.userData = { ...state.userData, ...updatedUser };
+            }
+
+            // 2. If it's the user currently selected / being viewed
+            if (state.selectedUser?._id?.toString() === updatedId) {
+                state.selectedUser = { ...state.selectedUser, ...updatedUser };
+            }
+
+            // 3. If the user exists in the sidebar / otherUsers list
+            if (Array.isArray(state.otherUsers)) {
+                state.otherUsers = state.otherUsers.map((user) => 
+                    user._id?.toString() === updatedId
+                        ? { ...user, ...updatedUser }
+                        : user
+                );
+            }
+        },
         setLogout: (state) => {
             state.userData = null;
             state.otherUsers = null;
@@ -48,6 +73,7 @@ export const {
     setOtherUsers, 
     setSelectedUser,
     setOnlineUsers,
-    setLoading , setLogout
+    setLoading , setLogout,
+    updateUserProfileRealtime
 } = userSlice.actions;
 

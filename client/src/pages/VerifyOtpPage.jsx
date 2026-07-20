@@ -153,7 +153,7 @@ async function handleVerify(ev) {
          
          <h2 className="text-2xl font-bold text-slate-900">Verification Code</h2>
          <p className="text-slate-500 text-sm mt-2 text-center">
-             Sent to <span className="font-semibold text-sky-600">{email}</span>
+             Sent to <span className="font-semibold text-sky-600">{email} , check in spam </span>
          </p>
          </div>
 

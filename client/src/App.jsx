@@ -42,7 +42,7 @@ return (
                     element={isAuthenticated ? <Profile /> : <Navigate to="/auth" replace />} 
                 />
                 <Route 
-                path="/profiledetails"
+                path="/profiledetails/:userId"
                 element={ isAuthenticated ? <ProfileDetails/> : <Navigate to='/auth' replace /> }
                 />
 

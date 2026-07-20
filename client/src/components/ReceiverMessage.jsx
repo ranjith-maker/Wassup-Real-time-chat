@@ -3,40 +3,6 @@ import { useSelector } from "react-redux";
 
 
 
-// export default function ReceiverMessage({ message, image }) {
-
-
-//   const {selectedUser} = useSelector(state => state.user ) 
-    
-//     return (
-//         <div className="w-full flex justify-start mb-1 animate-in fade-in slide-in-from-bottom-1 duration-150">
-//             <div className="relative max-w-[75%] lg:max-w-[60%] px-4 py-2.5 bg-white text-slate-800 rounded-2xl rounded-bl-none border border-slate-200/60 shadow-sm min-w-15">
-//                   <h1 className="text-sm  lowercase mt-1 "  > {selectedUser?.name} </h1>
-        
-//             {image && (
-//                     <div className={`rounded-xl overflow-hidden max-w-full my-1 ${message ? "mt-2" : ""}`}>
-//                         <img 
-//                             src={image} 
-//                             alt="Received attachment" 
-//                             className="w-full max-h-72 object-cover rounded-xl"
-//                             loading="lazy"
-//                         />
-//                     </div>
-//                 )}
-
-//             {message && (
-//                     <p className="text-lg leading-relaxed wrap-break-word whitespace-pre-wrap font-medium">
-//                         {message}
-//                     </p>
-//                 )}
-
-
-//                 {/* Tail bubble styling alignment element */}
-//                 <div className="absolute bottom-0 -left-1.5 w-0 h-0 border-t-8 border-t-transparent border-r-8 border-r-white drop-shadow-[-1px_1px_0px_rgba(226,232,240,0.6)]" />
-//             </div>
-//         </div>
-//     );
-// }
 
 
 export default function ReceiverMessage({ message, image }) {
@@ -44,7 +10,7 @@ export default function ReceiverMessage({ message, image }) {
     const { selectedUser } = useSelector(state => state.user);
 
     // Dynamic fallback avatar using the selected chat user context properties
-    const avatarUrl = selectedUser?.profilePicture || selectedUser?.profilePic || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedUser?.name || 'default'}`;
+    const avatarUrl = selectedUser?.profilePic || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedUser?.name || 'default'}`;
 
     return (
         <div className="w-full flex justify-start items-end gap-2.5 mb-2 animate-in fade-in slide-in-from-bottom-1 duration-150">

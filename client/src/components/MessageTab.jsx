@@ -214,7 +214,7 @@ return (
                         src={selectedUser.profilePicture || `https://api.dicebear.com/7.x/adventurer/svg?seed=${selectedUser.name}`} 
                         alt={selectedUser.name} 
                         className="w-full h-full object-cover rounded-full border border-slate-200 cursor-pointer"
-                        onClick={() => navigate('/profiledetails')}
+                        onClick={() => navigate(`/profiledetails/${selectedUser._id}`)}
                     />
                     {isOnline && <span className="h-3 w-3 bg-[#10b981] border-2 border-white rounded-full absolute bottom-0 right-0 shadow-sm" />}
                 </div>

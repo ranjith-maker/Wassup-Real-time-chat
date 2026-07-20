@@ -90,7 +90,7 @@ export const verifyOtp = catchAsync(async (req, res, next) => {
         { expiresIn: '2d' }
     );
 
-    // 4. Burn the verified OTP record immediately so it can never be intercepted or reused
+    // 4. deleting the verified OTP record immediately so it can never be reused
     await OTP.deleteOne({ _id: otpRecord._id });
 
   

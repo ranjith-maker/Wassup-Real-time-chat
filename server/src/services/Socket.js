@@ -68,6 +68,8 @@ export const initializeSocket = (server) => {
             io.emit('getOnlineUsers', Array.from(userSocketMap.keys()) )
 
             // console.log(`Disconnected: User [${userId}] removed`);
+
+        
         });
     });
 

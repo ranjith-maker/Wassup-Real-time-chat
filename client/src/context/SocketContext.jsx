@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { io } from "socket.io-client";
 import { IncomingMessage } from '../store/chatSlice';
 import { BASEURL } from "../main";
-import { setOnlineUsers } from "../store/userSlice";
+import { setOnlineUsers, setUserData, updateUserProfileRealtime } from "../store/userSlice";
 
 
 const SocketContext = createContext(null);
@@ -45,6 +45,10 @@ useEffect(() => {
 
             dispatch(IncomingMessage(message));
         });
+
+        socketInstance.on("user_profile_updated", (updatedUserData) => {
+                dispatch(updateUserProfileRealtime(updatedUserData));
+            });
     }
 
     return () => {
