@@ -13,20 +13,15 @@ dns.lookup("smtp.gmail.com", { all: true }, (err, addresses) => {
 });
 
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
+    service: "gmail",
 
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
     },
-
-    family: 4,
-
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000,
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
 
     tls: {
         rejectUnauthorized: false,
@@ -35,7 +30,6 @@ const transporter = nodemailer.createTransport({
     logger: true,
     debug: true,
 });
-
 // Verify SMTP connection when server starts
 transporter.verify((err, success) => {
     console.log("========== TRANSPORT VERIFY ==========");

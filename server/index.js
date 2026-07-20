@@ -1,9 +1,11 @@
+import dns from 'dns'
+dns.setDefaultResultOrder('ipv4first');
+
 import express from 'express'
 import dotenv from 'dotenv'
 dotenv.config()
 import ConnectDB from './src/config/DB.js'
 import cors from 'cors'
-import dns from 'dns'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import { errorHandler } from './src/utils/CommonError.js'
@@ -12,11 +14,11 @@ import authRouter from './src/routes/authRoutes.js'
 import userRouter from './src/routes/userRoutes.js'
 import chatRouter from './src/routes/chatRoutes.js'
 import http from 'http'
+
 import { initializeSocket } from './src/services/Socket.js'
 
 
 // Make Node.js to prefer IPv4 over IPv6 to fix Nodemailer ENETUNREACH
-dns.setDefaultResultOrder('ipv4first');
 
 
 
