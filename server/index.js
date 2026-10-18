@@ -1,9 +1,7 @@
-import dns from 'dns'
-dns.setDefaultResultOrder('ipv4first');
-
 import express from 'express'
 import dotenv from 'dotenv'
 dotenv.config()
+import dns from 'dns'
 import ConnectDB from './src/config/DB.js'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
@@ -30,7 +28,7 @@ const io = initializeSocket(server)
 //for gloabl access via req. object
 app.set('io', io);
 
-// app.use(morgan('dev'));
+app.use(morgan('dev'));
 app.use(express.json())
 app.use(express.urlencoded({ extended : true }))
 app.use(cookieParser())
@@ -38,7 +36,7 @@ app.use(cookieParser())
 
 
 app.use(cors({
-    origin : 'https://wassup-real-time-chat-frontend.onrender.com',
+    origin : 'http://localhost:5173',
     credentials: true
 
 }))

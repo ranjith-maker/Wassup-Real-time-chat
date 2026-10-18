@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 // Pages & Components
-import AuthPage from "./pages/AuthPage";
-import VerifyOtpPage from "./pages/VerifyOtpPage";
+import SignupPage from "./pages/SignupPage";
+import LoginPage from "./pages/LoginPage";
 
 //code splitting here
 const Home = lazy(() => import("./pages/Home"));
@@ -40,31 +40,31 @@ return (
                 {/* 1. PROTECTED ROUTE CHANNELS (Require Authentication) */}
                 <Route 
                     path="/" 
-                    element={isAuthenticated ? <Home /> : <Navigate to="/auth" replace />} 
+                    element={isAuthenticated ? <Home /> : <Navigate to="/login" replace />} 
                 />
                 <Route 
                     path="/profile" 
-                    element={isAuthenticated ? <Profile /> : <Navigate to="/auth" replace />} 
+                    element={isAuthenticated ? <Profile /> : <Navigate to="/login" replace />} 
                 />
                 <Route 
                 path="/profiledetails/:userId"
-                element={ isAuthenticated ? <ProfileDetails/> : <Navigate to='/auth' replace /> }
+                element={ isAuthenticated ? <ProfileDetails/> : <Navigate to='/login' replace /> }
                 />
 
                 {/* 2. PUBLIC ROUTE CHANNELS (Require User Status) */}
                 <Route 
-                    path="/auth" 
-                    element={!isAuthenticated ? <AuthPage /> : <Navigate to="/" replace />} 
+                    path="/signup" 
+                    element={!isAuthenticated ? <SignupPage /> : <Navigate to="/" replace />} 
                 />
                 <Route 
-                    path="/verify-otp" 
-                    element={!isAuthenticated ? <VerifyOtpPage /> : <Navigate to="/" replace />} 
+                    path="/login" 
+                    element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" replace />} 
                 />
 
                 {/* 3.this FALLBACK REDIRECT */}
                 <Route 
                     path="*" 
-                    element={<Navigate to={isAuthenticated ? "/" : "/auth"} replace />} 
+                    element={<Navigate to={isAuthenticated ? "/" : "/signup"} replace />} 
                 />
             </Routes>
             </Suspense>

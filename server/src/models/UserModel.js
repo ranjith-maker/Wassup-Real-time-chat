@@ -22,7 +22,18 @@ const userSchema = new mongoose.Schema({
         trim: true,
         validate(value){
             if(!validator.isEmail(value)){
-                throw new Error('Invalid Email address', value)
+                throw new Error('Invalid Email address')
+            }
+        }
+    },
+
+    password:{
+        type: String,
+        required:true,
+        select: false,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error('Invalid Password')
             }
         }
     },
@@ -35,8 +46,10 @@ const userSchema = new mongoose.Schema({
 
 
     bio: {
-        type: String,
-        default: "",
+    type: String,
+    default: "",
+    maxlength: 200,
+    trim: true,
     },
 
 
@@ -53,10 +66,9 @@ const payload = {
     id : this._id
 }
 
-const token = jwt.sign(payload , process.env.JWT_SECRET , {expiresIn : '2d'} )
+const token = jwt.sign(payload , process.env.JWT_SECRET , {expiresIn : '7d'} )
 
 return token
-
 
 }
 

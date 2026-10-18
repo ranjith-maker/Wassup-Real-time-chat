@@ -3,113 +3,107 @@ import Message from '../models/MessageModel.js'
 import jwt from 'jsonwebtoken' 
 import validator from 'validator'
 import AppError , {catchAsync} from '../utils/CommonError.js'
-import { sendOtptoEmail } from '../services/EmailServices.js'
 import crypto from 'crypto';
-import OTP from '../models/OtpModel.js'  // Adjust path as needed
+import bcrypt from 'bcrypt'
 
 
 
-export const sendOtp = catchAsync(async (req, res, next) => {
-    const { email, name } = req.body;
+export const registerUser = catchAsync(async(req, res , next)=>{
 
-    if (!email) {
-        return next(new AppError("Email is required", 400));
-    }
+const { name, email, password } = req.body
 
-    if (!validator.isEmail(email)) {
-        return next(new AppError("Please enter a valid email address", 400));
-    }
+if(!name || !email || !password){
+    throw new AppError('All fields are mandatory',400)
+}
 
-    // Check if user already exists in the database
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+if (!validator.isEmail(email)) {
+    throw new AppError("Provide a valid email", 400);
+}
 
-    // If they DON'T exist, it's a Signup flow -> Name is mandatory!
-    if (!existingUser && (!name || !name.trim())) {
-        return next(new AppError("Name is required for new user registration", 400));
-    }
+if(!validator.isStrongPassword(password)){
+    throw new AppError('"Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."',400)
+}
 
-    // Generate a secure, guaranteed 6-digit numeric string OTP
-    const otp = crypto.randomInt(100000, 999999).toString();
+const existingUser = await User.findOne({ email });
 
-    // Clean up old OTPs entries for this email before creating a new one
-    await OTP.deleteMany({ email: email.toLowerCase() });
+if(existingUser){
+      throw new AppError("User already exist with same emailID, go Login", 400);  
+}
 
-    // Save the new OTP record
-    await OTP.create({
-        email: email.toLowerCase(),
-        otp: otp
-    });
+const hashPass = await bcrypt.hash(password ,  12)
 
-    // Fire the email
-    await sendOtptoEmail(email, otp);
+const user = await User.create({
+    name,  
+    email,
+    password : hashPass
 
-    return res.status(200).json({
-        success: true,
-        message: "Verification code sent to your email"
-    });
-});
+})
 
+user.password = undefined;
 
+const token = user.getJWTToken()
 
-export const verifyOtp = catchAsync(async (req, res, next) => {
-    const { email, otp, name } = req.body;
-
-    if (!email || !otp) {
-        return next(new AppError("Email and OTP code are required", 400));
-    }
-
-    const normalizedEmail = email.toLowerCase();
-
-    // 1. Locate the OTP record matching this email and code
-    const otpRecord = await OTP.findOne({ email: normalizedEmail, otp });
-    
-    if (!otpRecord) {
-        return next(new AppError("Invalid or expired OTP", 400));
-    }
-
-    // 2. Fetch or create the user profile since OTP is correct
-    let user = await User.findOne({ email: normalizedEmail });
-
-    if (!user) {
-        // Fallback safety verification for signup data
-        if (!name || !name.trim()) {
-            return next(new AppError("Registration data missing. Please try signing up again.", 400));
-        }
-        // Save new user profile permanently to the DB
-        user = await User.create({
-            name: name.trim(),
-            email: normalizedEmail
-        });
-    }
+res.cookie('token', token, {
+    httpOnly : true,
+    secure :true,
+    sameSite: 'none',
+    maxAge: 7*24*60*60*1000
+})
 
 
-    // 3. Construct JWT Payload (Valid for 2 days)
-    const token = jwt.sign(
-        { id: user._id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '2d' }
-    );
+res.status(201).json({
+    success : true,
+    message : 'New User created Successfully',
+    data : user
+})
 
-    // 4. deleting the verified OTP record immediately so it can never be reused
-    await OTP.deleteOne({ _id: otpRecord._id });
+})
 
-  
-    res.cookie('token', token, {
-        httpOnly: true, 
-        secure: true,
-        sameSite: 'none', 
-        maxAge: 2 * 24 * 60 * 60 * 1000 
-    });
 
-    // 6. Return response to home route redirection
-    return res.status(200).json({
-        success: true,
-        message: "Authenticated successfully",
-        data : user
-     
-        
-    });
-});
+
+export const loginUser = catchAsync(async(req ,res,next)=>{
+
+const {email , password } = req.body
+ 
+if(!email || !password){
+    throw new AppError('Both Field is mandatory',400)
+}
+
+const user = await User.findOne({email}).select('+password')
+
+if(!user){
+    throw new AppError('User not found',400)
+
+}
+
+const checkPass = await bcrypt.compare(password , user.password )
+
+if(!checkPass){
+    throw new AppError('Invalid Credentials',400)
+
+}
+
+user.password = undefined;
+
+const token = user.getJWTToken()
+
+res.cookie('token', token, {
+    httpOnly : true,
+    secure :true,
+    sameSite: 'none',
+    maxAge: 7*24*60*60*1000
+})
+
+
+res.status(200).json({
+    success : true,
+    message: `${user.name},loggedin Successfully`,
+    data : user
+
+})
+
+
+})
 
 
 

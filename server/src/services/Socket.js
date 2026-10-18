@@ -16,7 +16,7 @@ export const getReceiverSocketId = (userId) => {
 export const initializeSocket = (server) => {
     const io = new Server(server, {
         cors: {
-            origin: "https://wassup-real-time-chat-frontend.onrender.com", 
+            origin: "http://localhost:5173", 
             credentials: true,
         },
     });
@@ -57,7 +57,7 @@ export const initializeSocket = (server) => {
         const userId = socket.userId; // Already string casted
 
         userSocketMap.set(userId, socket.id);
-        // console.log("SOCKET CONNECTED USER:", socket.userId );
+        console.log("SOCKET CONNECTED USER:", socket.userId );
         
          io.emit('getOnlineUsers', Array.from(userSocketMap.keys()) )
 
